@@ -1,0 +1,7 @@
+{
+    "name": "roneych/ecommerceapi",
+    "description": "ecommerceapi",
+    "require": {
+        "vlucas/phpdotenv": "^5.5"
+    }
+}
