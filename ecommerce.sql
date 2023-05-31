@@ -5,7 +5,7 @@ CREATE TABLE Usuario (
   email VARCHAR(255) NOT NULL,
   login VARCHAR(255) NOT NULL UNIQUE,
   senha VARCHAR(255) NOT NULL,
-  administrador BOOLEAN NOT NULL
+  administrador BOOLEAN DEFAULT 0
 );
 
 CREATE TABLE Produto (
