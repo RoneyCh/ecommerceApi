@@ -33,9 +33,9 @@ switch ($route) {
     case 'produtos':
         $produtoController = new ProdutoController($conn);
 
-        if ($method === 'GET' && !isset($_GET['route'])) {
+        if ($method === 'GET' && empty($id)) {
             $produtoController->listarProdutos();
-        } elseif ($method === 'GET' && isset($_GET['route'])) {
+        } elseif ($method === 'GET' && !empty($id)) {
             $produtoController->obterProduto($id);
         } elseif ($method === 'POST') {
             $data = json_decode(file_get_contents('php://input'), true);
@@ -77,15 +77,16 @@ function getIdFromRoute($route) {
     $parts = explode('/', $route);
     $lastPart = end($parts);
     $id = null;
+ 
     if($lastPart == 'usuarios' || $lastPart == 'produtos' || $lastPart == 'categorias') {
         $id = "";
     }
-    
+    else {
     if (strpos($lastPart, '{') === false) {
     $id = $lastPart;
     } else {
     $id = str_replace(['{', '}'], '', $lastPart);
     }
-    
+}
     return $id;
 }
