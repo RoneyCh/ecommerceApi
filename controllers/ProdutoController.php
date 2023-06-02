@@ -1,4 +1,5 @@
 <?php
+require_once 'AuntenticaMiddleware.php';
 
 class ProdutoController {
     private $produtoModel;
@@ -33,6 +34,7 @@ class ProdutoController {
     }
 
     public function criarProduto($data) {
+        verificaAcesso();
         // Insere o novo produto na tabela Produto
         $produtoId = $this->produtoModel->criar($data);
     
@@ -48,6 +50,7 @@ class ProdutoController {
     
 
     public function atualizarProduto($id, $dados) {
+        verificaAcesso();
         $produtoExistente = $this->produtoModel->obterPorId($id);
     
         if ($produtoExistente) {
@@ -86,6 +89,7 @@ class ProdutoController {
     
 
     public function excluirProduto($id) {
+        verificaAcesso();
         $produtoExistente = $this->produtoModel->obterPorId($id);
     
         if ($produtoExistente) {

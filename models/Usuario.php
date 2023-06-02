@@ -1,5 +1,8 @@
 <?php
 
+require_once 'AuntenticaMiddleware.php';
+verificaAcesso();
+
 class Usuario {
     private $conn;
     private $table = 'Usuario';

@@ -3,6 +3,8 @@
 require_once('./config/database.php');
 require_once('./models/Categoria.php');
 require_once('./controllers/CategoriaController.php');
+require_once 'AuntenticaMiddleware.php';
+
 class CategoriaController {
   
   private $categoriaModel;
@@ -20,6 +22,7 @@ class CategoriaController {
   }
 
   public function criarCategoria($dados) {
+    verificaAcesso();
     $novaCategoria = [
       'descricao' => $dados['descricao']
     ];
@@ -35,6 +38,7 @@ class CategoriaController {
   }
 
   public function atualizarCategoria($id, $dados) {
+    verificaAcesso();
     $categoriaAtualizada = [
       'descricao' => $dados['descricao']
     ];
@@ -50,6 +54,7 @@ class CategoriaController {
   }
 
   public function excluirCategoria($id) {
+    verificaAcesso();
     $exclusao = $this->categoriaModel->excluir($id);
 
     if ($exclusao) {

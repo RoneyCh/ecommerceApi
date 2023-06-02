@@ -19,12 +19,15 @@ switch ($route) {
         if ($method === 'GET') {
             $categoriaController->listarCategorias();
         } elseif ($method === 'POST') {
+            require_once 'login.php';
             $data = json_decode(file_get_contents('php://input'), true);
             $categoriaController->criarCategoria($data);
         } elseif ($method === 'PUT') {
+            require_once 'login.php';
             $data = json_decode(file_get_contents('php://input'), true);
             $categoriaController->atualizarCategoria($id, $data);
         } elseif ($method === 'DELETE') {
+            require_once 'login.php';
             $categoriaController->excluirCategoria($id);
         }
         
@@ -38,18 +41,22 @@ switch ($route) {
         } elseif ($method === 'GET' && !empty($id)) {
             $produtoController->obterProduto($id);
         } elseif ($method === 'POST') {
+            require_once 'login.php';
             $data = json_decode(file_get_contents('php://input'), true);
             $produtoController->criarProduto($data);
         } elseif ($method === 'PUT') {
+            require_once 'login.php';
             $data = json_decode(file_get_contents('php://input'), true);
             $produtoController->atualizarProduto($id, $data);
         } elseif ($method === 'DELETE') {
+            require_once 'login.php';
             $produtoController->excluirProduto($id);
         }
         
         break;
 
     case 'usuarios':
+        require_once 'login.php';
         $usuarioController = new UsuarioController($conn);
         if ($method === 'GET' && empty($id)) {
             $usuarioController->listarUsuarios();
