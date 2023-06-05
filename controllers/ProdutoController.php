@@ -1,5 +1,5 @@
 <?php
-require_once 'AuntenticaMiddleware.php';
+require_once 'AutenticaMiddleware.php';
 
 class ProdutoController {
     private $produtoModel;

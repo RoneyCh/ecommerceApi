@@ -2,8 +2,6 @@
 
 require_once('./config/database.php');
 require_once('./models/Categoria.php');
-require_once('./controllers/CategoriaController.php');
-require_once 'AuntenticaMiddleware.php';
 
 class CategoriaController {
   
@@ -13,15 +11,13 @@ class CategoriaController {
     $this->categoriaModel = new Categoria($conn);
   }
 
-
   public function listarCategorias() {
-    $categorias = $this->categoriaModel->listarTodas();
-
     header('Content-Type: application/json');
+    $categorias = $this->categoriaModel->listarTodas();
     echo json_encode($categorias);
   }
 
-  public function criarCategoria($dados) {
+  public function criarCategoria(array $dados) {
     verificaAcesso();
     $novaCategoria = [
       'descricao' => $dados['descricao']
@@ -37,7 +33,7 @@ class CategoriaController {
     }
   }
 
-  public function atualizarCategoria($id, $dados) {
+  public function atualizarCategoria($id, array $dados) {
     verificaAcesso();
     $categoriaAtualizada = [
       'descricao' => $dados['descricao']
@@ -65,6 +61,3 @@ class CategoriaController {
     }
   }
 }
-
-
-

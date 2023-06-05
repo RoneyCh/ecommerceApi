@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once './config/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $requestData = json_decode(file_get_contents('php://input'), true);
@@ -7,7 +8,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user = $requestData['user'];
     $password = $requestData['password'];
 
-    if ($user == $_ENV['USER_NAME'] && $password == $_ENV['USER_PASSWORD']) {
+    $query = "SELECT u.login, u.senha FROM Usuario u WHERE u.login = '$user' AND u.senha = '$password'";
+
+    $resultado = $conn->query($query);
+
+    if ($resultado->num_rows > 0) {
         $_SESSION['user'] = $user;
         http_response_code(200);
     } else {

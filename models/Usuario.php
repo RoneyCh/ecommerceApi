@@ -1,7 +1,6 @@
 <?php
 
-require_once 'AuntenticaMiddleware.php';
-verificaAcesso();
+require_once 'AutenticaMiddleware.php';
 
 class Usuario {
     private $conn;
@@ -12,6 +11,7 @@ class Usuario {
     }
 
     public function listarTodos() {
+        verificaAcesso();
         $query = "SELECT * FROM " . $this->table;
         $result = $this->conn->query($query);
 
@@ -26,6 +26,7 @@ class Usuario {
     }
 
     public function obterPorId($id) {
+        verificaAcesso();
         $query = "SELECT * FROM " . $this->table . " WHERE id = " . $id;
         $result = $this->conn->query($query);
         $usuario = $result->fetch_assoc();
@@ -34,6 +35,7 @@ class Usuario {
     }
 
     public function criar($usuario) {
+        verificaAcesso();
         $nome = $usuario['nome'];
         $endereco = $usuario['endereco'];
         $email = $usuario['email'];
@@ -52,6 +54,7 @@ class Usuario {
     }
 
     public function atualizar($usuario) {
+        verificaAcesso();
         $id = $usuario['id'];
         $nome = $usuario['nome'];
         $endereco = $usuario['endereco'];
@@ -65,6 +68,7 @@ class Usuario {
     }
 
     public function excluir($id) {
+        verificaAcesso();
         $query = "DELETE FROM " . $this->table . " WHERE id = " . $id;
         if($this->conn->query($query)){
             echo "\n Deletou o usuario! \n";
