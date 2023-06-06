@@ -28,8 +28,8 @@ class UsuarioController {
             'nome' => $data['nome'],
             'endereco' => $data['endereco'],
             'email' => $data['email'],
-            'login' => $data['login'],
-            'senha' => $data['senha'],
+            'login' => $data['nome'],
+            'senha' => password_hash($data['senha'], PASSWORD_DEFAULT),
             'administrador' => $data['administrador']
         ];
 
@@ -85,5 +85,41 @@ class UsuarioController {
             http_response_code(404);
             echo json_encode(['error' => 'Usuário não encontrado.']);
         }
+    }
+
+    public function loginUsuario($data) {
+        $email = $data['email'];
+        $senha = $data['senha'];
+        if (!isset($email) || !isset($senha)) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Parâmetros incorretos.']);
+        }
+
+        $user = $this->user->obterPorEmail($email);
+        if (password_verify($data['senha'], $user['senha'])) {
+            session_start();
+            $_SESSION["user"] = $user['id'];
+            http_response_code(200);
+            echo json_encode(['id' => $user['id']]);
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Usuário não encontrado.']);
+        }
+    }
+
+    public function getIdSession() {
+        session_start();
+        if (isset($_SESSION['user'])) {
+            echo json_encode(['id' => $_SESSION['user']]);
+        } else {
+            http_response_code(404);
+            echo json_encode(['error' => 'Session id não encontrado']);
+        }
+    }
+    
+    public function logout() {
+        session_start();
+        session_destroy();
+        echo json_encode(['message' => 'Sessão finalizada']);
     }
 }

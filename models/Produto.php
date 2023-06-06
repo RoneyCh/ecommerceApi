@@ -1,5 +1,4 @@
 <?php
-require_once 'AutenticaMiddleware.php';
 
 class Produto {
     private $conn;
@@ -35,7 +34,6 @@ class Produto {
     }
 
     public function criar($produto) {
-        verificaAcesso();
         $query = "INSERT INTO " . $this->table . " (descricao, preco,quantidade) VALUES ('" . $produto['descricao'] . "', '" . $produto['preco'] . "', " . $produto['quantidade'] . ")";
 
         if ($this->conn->query($query)) {
@@ -48,14 +46,12 @@ class Produto {
     }
 
     public function atualizar($produto) {
-        verificaAcesso();
         $query = "UPDATE " . $this->table . " SET descricao = '" . $produto['descricao'] . "', preco = '" . $produto['preco'] . "', quantidade = " . $produto['quantidade'] . " WHERE id = " . $produto['id'];
 
         return $this->conn->query($query);
     }
 
     public function excluir($id) {
-        verificaAcesso();
         $query = "DELETE FROM " . $this->table . " WHERE id = " . $id;
     
         return $this->conn->query($query);

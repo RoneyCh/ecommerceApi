@@ -34,8 +34,17 @@ class Usuario {
         return $usuario;
     }
 
+    public function obterPorEmail($email) {
+        $query = "SELECT * FROM usuario WHERE email = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
     public function criar($usuario) {
-        verificaAcesso();
+        
         $nome = $usuario['nome'];
         $endereco = $usuario['endereco'];
         $email = $usuario['email'];
