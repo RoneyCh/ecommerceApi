@@ -51,7 +51,6 @@ switch ($route) {
             $data = json_decode(file_get_contents('php://input'), true);
             $produtoController->atualizarProduto($id, $data);
         } elseif ($method === 'DELETE') {
-
             $produtoController->excluirProduto($id);
         } else if ($method === 'OPTIONS') {
             echo 'teste';
@@ -73,6 +72,8 @@ switch ($route) {
             header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
             header("Access-Control-Allow-Headers: Content-Type");
             header("Access-Control-Allow-Credentials: true");
+        } else if ($method === 'GET') {
+            $produtoController->getImagem($_GET['path']);
         }
         break;
     case 'usuarios':
