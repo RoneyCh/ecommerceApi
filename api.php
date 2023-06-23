@@ -45,20 +45,36 @@ switch ($route) {
         } elseif ($method === 'GET' && !empty($id)) {
             $produtoController->obterProduto($id);
         } elseif ($method === 'POST') {
-            // 
             $data = json_decode(file_get_contents('php://input'), true);
             $produtoController->criarProduto($data);
         } elseif ($method === 'PUT') {
-
             $data = json_decode(file_get_contents('php://input'), true);
             $produtoController->atualizarProduto($id, $data);
         } elseif ($method === 'DELETE') {
 
             $produtoController->excluirProduto($id);
+        } else if ($method === 'OPTIONS') {
+            echo 'teste';
+            header("Access-Control-Allow-Origin: http://localhost:5173");
+            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+            header("Access-Control-Allow-Headers: Content-Type");
+            header("Access-Control-Allow-Credentials: true");
+            exit;
         }
 
         break;
-
+    
+    case 'foto':
+        $produtoController = new ProdutoController($conn);
+        if ($method === 'POST') {
+            $produtoController->insereFoto($data);
+        } else if ($method === 'OPTIONS') {
+            header("Access-Control-Allow-Origin: http://localhost:5173");
+            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+            header("Access-Control-Allow-Headers: Content-Type");
+            header("Access-Control-Allow-Credentials: true");
+        }
+        break;
     case 'usuarios':
         $usuarioController = new UsuarioController($conn);
         if ($method === 'GET' && empty($id)) {

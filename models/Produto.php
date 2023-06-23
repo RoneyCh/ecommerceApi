@@ -34,15 +34,12 @@ class Produto {
     }
 
     public function criar($produto) {
-        $query = "INSERT INTO " . $this->table . " (descricao, preco,quantidade) VALUES ('" . $produto['descricao'] . "', '" . $produto['preco'] . "', " . $produto['quantidade'] . ")";
-
-        if ($this->conn->query($query)) {
-            echo "\n Inseriu o produto! \n";
-            return $this->conn->insert_id;
-        } else {
-            echo "\n Deu ruim! \n";
-            return false;
-        }
+        $query = "INSERT INTO " . $this->table . " (descricao, preco, quantidade, foto) VALUES (?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('ssss', $produto['descricao'], $produto['preco'], $produto['quantidade'], $produto['foto']);
+        $stmt->execute();
+        $stmt->close();
+        return $this->conn->insert_id;
     }
 
     public function atualizar($produto) {

@@ -16,6 +16,18 @@ class ProdutoController {
         $produtos = $this->produtoModel->listarTodos();
 
         if (!empty($produtos)) {
+            if( ini_get( 'allow_url_fopen' ) ){
+                $imgPath= $produtos[0]['foto'];
+            } else {
+                $imgPath=realpath( $_SERVER['DOCUMENT_ROOT']. $produtos[0]['foto'] );
+            }
+        
+            header("Content-type: image/png");
+            $image = imagecreatefrompng($imgPath);
+            imagesavealpha($image,true);
+            imagealphablending($image,true);
+            imagepng($image);
+            imagedestroy($image);
             echo json_encode($produtos);
         } else {
             echo json_encode(['message' => 'Nenhum produto encontrado.']);
@@ -39,13 +51,35 @@ class ProdutoController {
         $produtoId = $this->produtoModel->criar($data);
     
         // Insere os pares de IDs de produto e categoria na tabela Produto_Categoria
-        $categorias = $data['categorias'];
+        // $categorias = $data['categorias'];
 
-        foreach ($categorias as $categoriaId) {
-            $this->produtoCategoriaModel->criar($produtoId, $categoriaId);
-        }
+        // foreach ($categorias as $categoriaId) {
+        //     $this->produtoCategoriaModel->criar($produtoId, $categoriaId);
+        // }
     
         echo json_encode(['id' => $produtoId]);
+    }
+
+    public function insereFoto() {
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $tempDiretorio = $_FILES['foto']['tmp_name'];
+            $diretorioDestino = './files/';  // Substitua pelo caminho real do diretório de destino
+            $fotoId = uniqid('', true);
+            $mimetype = mime_content_type($tempDiretorio);
+            $mimetype = explode('/', $mimetype);
+            $mimetype = end($mimetype);
+            $diretorioDestino = $diretorioDestino . $fotoId;
+
+            // Move o arquivo para o diretório de destino
+            if (move_uploaded_file($tempDiretorio, $diretorioDestino)) {
+                echo "$diretorioDestino.$mimetype";
+            } else {
+                echo 'Ocorreu um erro ao salvar o arquivo.';
+            }
+        } else {
+            http_response_code(400);
+            echo 'Nenhum arquivo foi enviado ou ocorreu um erro durante o envio.';
+        }
     }
     
 

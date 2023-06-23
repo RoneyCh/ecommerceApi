@@ -100,7 +100,7 @@ class UsuarioController {
             session_start();
             $_SESSION["user"] = $user['id'];
             http_response_code(200);
-            echo json_encode(['id' => $user['id']]);
+            echo json_encode(['id' => $user['id'], 'admin' => $user['administrador']]);
         } else {
             http_response_code(400);
             echo json_encode(['error' => 'Usuário não encontrado.']);
