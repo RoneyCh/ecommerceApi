@@ -1,18 +1,21 @@
 <?php
 require_once 'AutenticaMiddleware.php';
 
-class ProdutoController {
+class ProdutoController
+{
     private $produtoModel;
     private $produtoCategoriaModel;
 
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         require_once('./models/Produto.php');
         require_once('./models/ProdutoCategoria.php');
         $this->produtoModel = new Produto($conn);
         $this->produtoCategoriaModel = new ProdutoCategoria($conn);
     }
 
-    public function listarProdutos() {
+    public function listarProdutos()
+    {
         $produtos = $this->produtoModel->listarTodos();
 
         if (!empty($produtos)) {
@@ -22,12 +25,14 @@ class ProdutoController {
         }
     }
 
-    public function getImagem($imagemPath) {
+    public function getImagem($imagemPath)
+    {
         header("Content-type: image/png");
         readfile($imagemPath);
     }
 
-    public function obterProduto($id) {
+    public function obterProduto($id)
+    {
         $produto = $this->produtoModel->obterPorId($id);
 
         if ($produto) {
@@ -38,22 +43,24 @@ class ProdutoController {
         }
     }
 
-    public function criarProduto($data) {
+    public function criarProduto($data)
+    {
         verificaAcesso();
         // Insere o novo produto na tabela Produto
         $produtoId = $this->produtoModel->criar($data);
-    
-        // Insere os pares de IDs de produto e categoria na tabela Produto_Categoria
-        // $categorias = $data['categorias'];
 
-        // foreach ($categorias as $categoriaId) {
-        //     $this->produtoCategoriaModel->criar($produtoId, $categoriaId);
-        // }
-    
+        // Insere os pares de IDs de produto e categoria na tabela Produto_Categoria
+        $categorias = $data['categorias'];
+        $categorias = str_split($categorias, 1);
+        foreach ($categorias as $categoriaId) {
+            $this->produtoCategoriaModel->criar($produtoId, $categoriaId);
+        }
+
         echo json_encode(['id' => $produtoId]);
     }
 
-    public function insereFoto() {
+    public function insereFoto()
+    {
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
             $tempDiretorio = $_FILES['foto']['tmp_name'];
             $diretorioDestino = './files/';  // Substitua pelo caminho real do diretório de destino
@@ -71,12 +78,13 @@ class ProdutoController {
             echo 'Nenhum arquivo foi enviado ou ocorreu um erro durante o envio.';
         }
     }
-    
 
-    public function atualizarProduto($id, $dados) {
+
+    public function atualizarProduto($id, $dados)
+    {
         verificaAcesso();
         $produtoExistente = $this->produtoModel->obterPorId($id);
-    
+
         if ($produtoExistente) {
             // Atualiza os campos do produto
             $produtoAtualizado = [
@@ -85,19 +93,19 @@ class ProdutoController {
                 'preco' => $dados['preco'],
                 'quantidade' => $dados['quantidade']
             ];
-    
+
             // Verifica se as categorias foram fornecidas
             if (isset($dados['categorias'])) {
                 $categorias = $dados['categorias'];
-    
+
                 // Atualiza as categorias do produto
                 $this->produtoCategoriaModel->excluirPorProduto($id); // Exclui todas as categorias do produto
-    
+                $categorias = str_split($categorias);
                 foreach ($categorias as $categoriaId) {
                     $this->produtoCategoriaModel->criar($id, $categoriaId); // Cria os novos registros de ProdutoCategoria
                 }
             }
-    
+
             // Atualiza o produto
             if ($this->produtoModel->atualizar($produtoAtualizado)) {
                 echo json_encode(['message' => 'Produto atualizado com sucesso.']);
@@ -110,12 +118,13 @@ class ProdutoController {
             echo json_encode(['error' => 'Produto não encontrado.']);
         }
     }
-    
 
-    public function excluirProduto($id) {
+
+    public function excluirProduto($id)
+    {
         verificaAcesso();
         $produtoExistente = $this->produtoModel->obterPorId($id);
-    
+
         if ($produtoExistente) {
             // Exclui as associações do produto com as categorias
             $this->produtoCategoriaModel->excluirPorProduto($id);
@@ -130,5 +139,4 @@ class ProdutoController {
             echo json_encode(['error' => 'Produto não encontrado.']);
         }
     }
-    
 }

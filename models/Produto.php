@@ -9,7 +9,7 @@ class Produto {
     }
 
     public function listarTodos() {
-        $query = "SELECT p.id, p.descricao, p.preco, p.foto, p.quantidade, c.descricao as categoria 
+        $query = "SELECT p.id, p.descricao, p.preco, p.foto, p.quantidade, c.id as id_categoria 
         FROM " . $this->table . " as p 
         LEFT JOIN Produto_Categoria as pc ON p.id = pc.id_produto 
         LEFT JOIN Categoria as c ON c.id = pc.id_categoria";

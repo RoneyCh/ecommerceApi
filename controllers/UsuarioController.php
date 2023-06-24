@@ -110,7 +110,8 @@ class UsuarioController {
     public function getIdSession() {
         session_start();
         if (isset($_SESSION['user'])) {
-            echo json_encode(['id' => $_SESSION['user']]);
+            $user = $this->user->obterPorId($_SESSION['user']);
+            echo json_encode(['id' => $_SESSION['user'], 'isAdmin' => $user['administrador']]);
         } else {
             http_response_code(404);
             echo json_encode(['error' => 'Session id não encontrado']);
