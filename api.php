@@ -23,7 +23,6 @@ switch ($route) {
         if ($method === 'GET') {
             $categoriaController->listarCategorias();
         } elseif ($method === 'POST') {
-
             $data = json_decode(file_get_contents('php://input'), true);
             $categoriaController->criarCategoria($data);
         } elseif ($method === 'PUT') {
@@ -33,6 +32,13 @@ switch ($route) {
         } elseif ($method === 'DELETE') {
 
             $categoriaController->excluirCategoria($id);
+        } else if ($method === 'OPTIONS') {
+            echo 'teste';
+            header("Access-Control-Allow-Origin: http://localhost:5173");
+            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+            header("Access-Control-Allow-Headers: Content-Type");
+            header("Access-Control-Allow-Credentials: true");
+            exit;
         }
 
         break;

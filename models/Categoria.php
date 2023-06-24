@@ -26,7 +26,7 @@ class Categoria
 
   public function criar($categoria)
   {
-    if (!$this->getCategoria($categoria['descricao']) == false) {
+    if ($this->getCategoria($categoria['descricao']) == false) {
 
       $descricao = $categoria['descricao'];
       $query = "INSERT INTO " . $this->table . " (descricao) VALUES ('$descricao')";
@@ -65,6 +65,7 @@ class Categoria
   public function getCategoria($descricao)
   {
     $query = "SELECT 1 FROM " . $this->table . " WHERE descricao = '$descricao'";
+
     $result = $this->conn->query($query);
 
     if ($result->num_rows > 0) {
