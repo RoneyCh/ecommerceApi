@@ -16,22 +16,15 @@ class ProdutoController {
         $produtos = $this->produtoModel->listarTodos();
 
         if (!empty($produtos)) {
-            if( ini_get( 'allow_url_fopen' ) ){
-                $imgPath= $produtos[0]['foto'];
-            } else {
-                $imgPath=realpath( $_SERVER['DOCUMENT_ROOT']. $produtos[0]['foto'] );
-            }
-        
-            header("Content-type: image/png");
-            $image = imagecreatefrompng($imgPath);
-            imagesavealpha($image,true);
-            imagealphablending($image,true);
-            imagepng($image);
-            imagedestroy($image);
             echo json_encode($produtos);
         } else {
             echo json_encode(['message' => 'Nenhum produto encontrado.']);
         }
+    }
+
+    public function getImagem($imagemPath) {
+        header("Content-type: image/png");
+        readfile($imagemPath);
     }
 
     public function obterProduto($id) {
@@ -65,14 +58,11 @@ class ProdutoController {
             $tempDiretorio = $_FILES['foto']['tmp_name'];
             $diretorioDestino = './files/';  // Substitua pelo caminho real do diretório de destino
             $fotoId = uniqid('', true);
-            $mimetype = mime_content_type($tempDiretorio);
-            $mimetype = explode('/', $mimetype);
-            $mimetype = end($mimetype);
             $diretorioDestino = $diretorioDestino . $fotoId;
 
             // Move o arquivo para o diretório de destino
             if (move_uploaded_file($tempDiretorio, $diretorioDestino)) {
-                echo "$diretorioDestino.$mimetype";
+                echo "$diretorioDestino";
             } else {
                 echo 'Ocorreu um erro ao salvar o arquivo.';
             }
@@ -129,7 +119,6 @@ class ProdutoController {
         if ($produtoExistente) {
             // Exclui as associações do produto com as categorias
             $this->produtoCategoriaModel->excluirPorProduto($id);
-    
             if ($this->produtoModel->excluir($id)) {
                 echo json_encode(['message' => 'Produto excluído com sucesso.']);
             } else {
