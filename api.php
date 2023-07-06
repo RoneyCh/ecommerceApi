@@ -4,6 +4,7 @@ require_once './config/database.php';
 require_once 'controllers/CategoriaController.php';
 require_once 'controllers/ProdutoController.php';
 require_once 'controllers/UsuarioController.php';
+require_once 'controllers/VendaController.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $routeParts = explode('/', $_GET['route']);
@@ -67,11 +68,11 @@ switch ($route) {
         }
 
         break;
-    
+
     case 'foto':
         $produtoController = new ProdutoController($conn);
         if ($method === 'POST') {
-            $produtoController->insereFoto($data);
+            $produtoController->insereFoto();
         } else if ($method === 'OPTIONS') {
             header("Access-Control-Allow-Origin: http://localhost:5173");
             header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -122,6 +123,25 @@ switch ($route) {
         } else {
             http_response_code(405);
             echo json_encode(['error' => 'Método não permitido']);
+        }
+        break;
+    case 'venda':
+        $vendaController = new VendaController($conn);
+        if ($method === 'POST') {
+            $data = json_decode(file_get_contents('php://input', true));
+            $vendaController->criarVenda($data);
+        } else if ($method === 'GET') {
+            if ($_GET['tipo'] === 'todas') {
+                
+            } else {
+                $vendaController->listarVendasUsuario();
+            }
+        } else if ($method === 'OPTIONS') {
+            header("Access-Control-Allow-Origin: http://localhost:5173");
+            header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+            header("Access-Control-Allow-Headers: Content-Type");
+            header("Access-Control-Allow-Credentials: true");
+            exit;
         }
         break;
     default:
