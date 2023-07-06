@@ -27,7 +27,7 @@ class ProdutoController
 
     public function getImagem($imagemPath)
     {
-        header("Content-type: image/png");
+        //header("Content-type: image/png");
         readfile($imagemPath);
     }
 
@@ -65,8 +65,10 @@ class ProdutoController
             $tempDiretorio = $_FILES['foto']['tmp_name'];
             $diretorioDestino = './files/';  // Substitua pelo caminho real do diretório de destino
             $fotoId = uniqid('', true);
-            $diretorioDestino = $diretorioDestino . $fotoId;
-
+            $fileInfo = pathinfo($_FILES['foto']['name']);
+            $extensao = $fileInfo['extension'];
+            $diretorioDestino = $diretorioDestino . $fotoId . '.' . $extensao;
+            
             // Move o arquivo para o diretório de destino
             if (move_uploaded_file($tempDiretorio, $diretorioDestino)) {
                 echo "$diretorioDestino";
@@ -91,7 +93,8 @@ class ProdutoController
                 'id' => $id,
                 'descricao' => $dados['descricao'],
                 'preco' => $dados['preco'],
-                'quantidade' => $dados['quantidade']
+                'quantidade' => $dados['quantidade'],
+                'foto' => $dados['foto']
             ];
 
             // Verifica se as categorias foram fornecidas

@@ -10,7 +10,7 @@ class Produto {
 
     public function listarTodos() {
         $query = "SELECT p.id, p.descricao, p.preco, p.foto, p.quantidade, c.id as id_categoria 
-        FROM " . $this->table . " as p 
+        FROM {$this->table} as p 
         LEFT JOIN Produto_Categoria as pc ON p.id = pc.id_produto 
         LEFT JOIN Categoria as c ON c.id = pc.id_categoria";
         $result = $this->conn->query($query);
@@ -26,32 +26,46 @@ class Produto {
     }
 
     public function obterPorId($id) {
-        $query = "SELECT * FROM " . $this->table . " WHERE id = " . $id;
-        $result = $this->conn->query($query);
+        $query = "SELECT * FROM {$this->table} WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
         $produto = $result->fetch_assoc();
 
         return $produto;
     }
 
     public function criar($produto) {
-        $query = "INSERT INTO " . $this->table . " (descricao, preco, quantidade, foto) VALUES (?, ?, ?, ?)";
+        $query = "INSERT INTO {$this->table} (descricao, preco, quantidade, foto) VALUES (?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('ssss', $produto['descricao'], $produto['preco'], $produto['quantidade'], $produto['foto']);
+        $stmt->bind_param('ssis', $produto['descricao'], $produto['preco'], $produto['quantidade'], $produto['foto']);
         $stmt->execute();
+        $insertId = $stmt->insert_id;
         $stmt->close();
-        return $this->conn->insert_id;
+
+        return $insertId;
     }
 
     public function atualizar($produto) {
-        $query = "UPDATE " . $this->table . " SET descricao = '" . $produto['descricao'] . "', preco = '" . $produto['preco'] . "', quantidade = " . $produto['quantidade'] . " WHERE id = " . $produto['id'];
+        $query = "UPDATE {$this->table} SET descricao = ?, preco = ?, quantidade = ?, foto = ? WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('ssdsi', $produto['descricao'], $produto['preco'], $produto['quantidade'], $produto['foto'], $produto['id']);
 
-        return $this->conn->query($query);
+        $stmt->execute();
+        $stmt->close();
+
+        return $this->conn->affected_rows;
     }
 
     public function excluir($id) {
-        $query = "DELETE FROM " . $this->table . " WHERE id = " . $id;
-    
-        return $this->conn->query($query);
+        $query = "DELETE FROM {$this->table} WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param('i', $id);
+        $stmt->execute();
+        $stmt->close();
+
+        return $this->conn->affected_rows;
     }
     
 }
