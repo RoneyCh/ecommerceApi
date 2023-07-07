@@ -93,10 +93,16 @@ class Venda
 
   public function getVendas($id)
   {
-    $query = "SELECT * FROM " . $this->table .
-      " JOIN Produto_Venda ON Produto_Venda.id_venda = Venda.id
-               JOIN Produto ON Produto_Venda.id_produto = Produto.id
-               WHERE id_cliente = $id";
+               $query = "SELECT
+      v.id,
+      v.data_hora,
+      v.id_cliente,
+      u.nome,
+      u.endereco
+     FROM " . $this->table . " v
+        JOIN Usuario u ON v.id_cliente = u.id
+        WHERE id_cliente = $id";
+               
     $result = $this->conn->query($query);
 
     $vendas = [];
@@ -107,5 +113,6 @@ class Venda
     }
 
     return $vendas;
+    
   }
 }

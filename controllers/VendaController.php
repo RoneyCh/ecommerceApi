@@ -21,7 +21,12 @@ class VendaController {
   }
 
   public function listarVendasUsuario() {
+    header('Content-Type: application/json');
     $vendas = $this->vendaModel->getVendas($_SESSION['user']);
+    for ($i = 0; $i < sizeof($vendas); $i++) {
+      $produtos = $this->vendaModel->getProdutosVenda($vendas[$i]['id']);
+      $vendas[$i]['produtos'] = $produtos;
+    }
     echo json_encode($vendas);
   }
 

@@ -1,6 +1,6 @@
 <?php
 require './vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable('/home/vanderson/Documentos/GitHub/ecommerceApi');
+$dotenv = Dotenv\Dotenv::createImmutable('/var/www/html/ecommerce api/');
 $dotenv->load();
 
 $servername = $_ENV['DB_HOST'];
