@@ -12,14 +12,15 @@ class Venda
   public function listarTodas()
   {
     $query = "SELECT
-      venda.id,
-      venda.data_hora,
-      venda.id_cliente,
-      usuario.nome,
-      usuario.endereco
-     FROM " . $this->table . "
-        JOIN usuario ON venda.id_cliente = usuario.id
+      v.id,
+      v.data_hora,
+      v.id_cliente,
+      u.nome,
+      u.endereco
+     FROM " . $this->table . " v
+        JOIN Usuario u ON v.id_cliente = u.id
     ";
+
     $result = $this->conn->query($query);
 
     $vendas = [];
@@ -39,8 +40,8 @@ class Venda
       produto.descricao,
       produto.preco,
       produto_venda.quantidade
-     FROM produto
-      JOIN produto_venda ON produto.id = produto_venda.id_produto
+     FROM Produto produto
+      JOIN Produto_Venda produto_venda ON produto.id = produto_venda.id_produto
       WHERE produto_venda.id_venda = $id";
 
     $result = $this->conn->query($query);
@@ -78,7 +79,7 @@ class Venda
 
   public function excluir($id)
   {
-    $query = "DELETE FROM produto_venda
+    $query = "DELETE FROM Produto_Venda produto_venda
               WHERE produto_venda.id_venda = $id
             ";
     $result = $this->conn->query($query);

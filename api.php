@@ -138,7 +138,7 @@ switch ($route) {
             if ($usuarioController->verificaAdmin($_SESSION['user'])) {
                 $vendaController->listarVendas();
             } else {
-                $vendaController->listarVendasUsuario();
+                $vendaController->listarVendas();
             }
         } else if ($method === 'DELETE') {
             $vendaController->excluirVenda($id);
