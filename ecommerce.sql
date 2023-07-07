@@ -23,7 +23,7 @@ CREATE TABLE Categoria (
 
 CREATE TABLE Venda (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  data_hora TIMESTAMP NOT NULL,
+  data_hora TIMESTAMP NOT NULL DEFAULT current_timestamp(),
   id_cliente INT NOT NULL,
   FOREIGN KEY (id_cliente) REFERENCES Usuario (id)
 );
