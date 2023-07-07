@@ -2,7 +2,6 @@
 
 require_once('./config/database.php');
 require_once('./models/Venda.php');
-session_start();
 class VendaController {
   
   private $vendaModel;
@@ -14,6 +13,10 @@ class VendaController {
   public function listarVendas() {
     header('Content-Type: application/json');
     $vendas = $this->vendaModel->listarTodas();
+    for ($i = 0; $i < sizeof($vendas); $i++) {
+      $produtos = $this->vendaModel->getProdutosVenda($vendas[$i]['id']);
+      $vendas[$i]['produtos'] = $produtos;
+    }
     echo json_encode($vendas);
   }
 

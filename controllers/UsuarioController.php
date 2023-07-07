@@ -1,19 +1,23 @@
 <?php
 require_once('./config/database.php');
 require_once('./models/Usuario.php');
-class UsuarioController {
+class UsuarioController
+{
     private $user;
 
-    public function __construct($conn) {
+    public function __construct($conn)
+    {
         $this->user = new Usuario($conn);
     }
 
-    public function listarUsuarios() {
+    public function listarUsuarios()
+    {
         $usuarios = $this->user->listarTodos();
         echo json_encode($usuarios);
     }
 
-    public function obterUsuario($id) {
+    public function obterUsuario($id)
+    {
         $usuario = $this->user->obterPorId($id);
         if ($usuario) {
             echo json_encode($usuario);
@@ -23,7 +27,17 @@ class UsuarioController {
         }
     }
 
-    public function criarUsuario($data) {
+    public function verificaAdmin($id)
+    {
+        $usuario = $this->user->obterPorId($id);
+        if ($usuario['administrador'] == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function criarUsuario($data)
+    {
         $usuario = [
             'nome' => $data['nome'],
             'endereco' => $data['endereco'],
@@ -42,11 +56,12 @@ class UsuarioController {
         }
     }
 
-    public function atualizarUsuario($id, $dados) {
+    public function atualizarUsuario($id, $dados)
+    {
         $usuarioExistente = $this->user->obterPorId($id);
 
         if ($usuarioExistente) {
-            if(empty($dados['administrador']) || !isset($dados['administrador'])) { 
+            if (empty($dados['administrador']) || !isset($dados['administrador'])) {
                 $dados['administrador'] = 0; // Incluindo como usuário comum caso não seja informado
             }
             $usuarioAtualizado = [
@@ -71,7 +86,8 @@ class UsuarioController {
         }
     }
 
-    public function excluirUsuario($id) {
+    public function excluirUsuario($id)
+    {
         $usuarioExistente = $this->user->obterPorId($id);
 
         if ($usuarioExistente) {
@@ -87,7 +103,8 @@ class UsuarioController {
         }
     }
 
-    public function loginUsuario($data) {
+    public function loginUsuario($data)
+    {
         $email = $data['email'];
         $senha = $data['senha'];
         if (!isset($email) || !isset($senha)) {
@@ -97,7 +114,9 @@ class UsuarioController {
 
         $user = $this->user->obterPorEmail($email);
         if (password_verify($data['senha'], $user['senha'])) {
-            session_start();
+            if (!isset($_SESSION)) {
+                session_start();
+            }
             $_SESSION["user"] = $user['id'];
             http_response_code(200);
             echo json_encode(['id' => $user['id'], 'admin' => $user['administrador']]);
@@ -107,8 +126,11 @@ class UsuarioController {
         }
     }
 
-    public function getIdSession() {
-        session_start();
+    public function getIdSession()
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         if (isset($_SESSION['user'])) {
             $user = $this->user->obterPorId($_SESSION['user']);
             echo json_encode(['id' => $_SESSION['user'], 'isAdmin' => $user['administrador']]);
@@ -117,9 +139,12 @@ class UsuarioController {
             echo json_encode(['error' => 'Session id não encontrado']);
         }
     }
-    
-    public function logout() {
-        session_start();
+
+    public function logout()
+    {
+        if (!isset($_SESSION)) {
+            session_start();
+        }
         session_destroy();
         echo json_encode(['message' => 'Sessão finalizada']);
     }

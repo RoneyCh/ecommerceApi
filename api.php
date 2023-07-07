@@ -127,15 +127,21 @@ switch ($route) {
         break;
     case 'venda':
         $vendaController = new VendaController($conn);
+        $usuarioController = new UsuarioController($conn);
         if ($method === 'POST') {
             $data = json_decode(file_get_contents('php://input', true));
             $vendaController->criarVenda($data);
         } else if ($method === 'GET') {
-            if ($_GET['tipo'] === 'todas') {
-                
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+            if ($usuarioController->verificaAdmin($_SESSION['user'])) {
+                $vendaController->listarVendas();
             } else {
                 $vendaController->listarVendasUsuario();
             }
+        } else if ($method === 'DELETE') {
+            $vendaController->excluirVenda($id);
         } else if ($method === 'OPTIONS') {
             header("Access-Control-Allow-Origin: http://localhost:5173");
             header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
